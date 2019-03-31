@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
+import 'package:intl/intl.dart';
 
 import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
@@ -132,11 +133,34 @@ class LandingPageState extends State<LandingPage> {
       itemCount: transactions.length,
       itemBuilder: (context, index) {
         final Transaction transaction = transactions[index];
-
-        return ListTile(
-          title: Text(transaction.name),
-          subtitle: Text(transaction.value.toString()),
-        );
+        final currencyFormat = NumberFormat("#,##0.00", 'nl_NL');
+        if (transaction.type != "hidden") {
+          return Card(
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: CircleAvatar(
+                  child: Text(transaction.name[0].toUpperCase()),
+                  backgroundColor:
+                      transaction.type == 'expense' ? Colors.red : Colors.green,
+                ),
+                title: Text(transaction.name),
+                subtitle: Text("€ ${currencyFormat.format(transaction.value)}"),
+              ),
+              ButtonTheme.bar(
+                  child: ButtonBar(
+                children: <Widget>[
+                  FlatButton(child: Text('DELETE'), onPressed: () {})
+                ],
+              ))
+            ],
+          ));
+        } else {
+          return SizedBox(
+            child: null,
+          );
+        }
       },
     );
   }
@@ -158,12 +182,14 @@ class LandingPageState extends State<LandingPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Google Sign In'),
+          title: const Text('Fludgetplanner'),
           actions: <Widget>[button],
         ),
         body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
+          child: Material(
+            child: _buildBody(),
+          ),
         ));
   }
 }
