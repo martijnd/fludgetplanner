@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1053409432630",
+    "firebase_url": "https://budgetplanner-e8ff2.firebaseio.com",
+    "project_id": "budgetplanner",
+    "storage_bucket": "budgetplanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053409432630:android:b3425f78185cc455",
+        "android_client_info": {
+          "package_name": "com.example.fludgetplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1053409432630-g62o5dh8nu9edan4rs2optbo5rrptjg0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fludgetplanner",
+            "certificate_hash": "75de692d3f4d6b23d1f7d2532541ccb759f817a7"
+          }
+        },
+        {
+          "client_id": "1053409432630-1g6snn8qvb9ilpblo9o2niidoul7gjv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCplVOV3pB2qekX4VYiyRkptUV09hp6_jo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1053409432630-1g6snn8qvb9ilpblo9o2niidoul7gjv9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
