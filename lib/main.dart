@@ -87,21 +87,9 @@ class LandingPageState extends State<LandingPage> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          ListTile(
-            leading: GoogleUserCircleAvatar(
-              identity: _currentUser,
-            ),
-            title: Text(_currentUser.displayName),
-            subtitle: Text(_currentUser.email),
-          ),
-          const Text("Signed in successfully."),
-          RaisedButton(
-            child: const Text('SIGN OUT'),
-            onPressed: _handleSignOut,
-          ),
           Expanded(
               child: Container(
-            decoration: new BoxDecoration(),
+            decoration: BoxDecoration(),
             child: _buildUserInfo(),
           ))
         ],
@@ -130,7 +118,8 @@ class LandingPageState extends State<LandingPage> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return CircularProgressIndicator();
+          return SizedBox(
+              child: CircularProgressIndicator(), height: 100.0, width: 100.0);
         },
       );
     }
@@ -154,9 +143,23 @@ class LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    IconButton button;
+    if (_currentUser != null) {
+      button = IconButton(
+        icon: Icon(Icons.person),
+        onPressed: _handleSignOut,
+      );
+    } else {
+      button = IconButton(
+        icon: Icon(Icons.input),
+        onPressed: _handleSignIn,
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Google Sign In'),
+          actions: <Widget>[button],
         ),
         body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),
