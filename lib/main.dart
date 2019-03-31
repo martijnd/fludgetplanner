@@ -32,6 +32,10 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _currentUser;
+  String _apiRoot = 'http://021d49f6.ngrok.io/api/';
+  User user;
+  List<Transaction> transactions;
+  List<Category> categories;
 
   @override
   void initState() {
@@ -56,6 +60,16 @@ class LandingPageState extends State<LandingPage> {
     _googleSignIn.disconnect();
   }
 
+  Future<User> _fetchUser() async {
+    final response = await http.get(_apiRoot + _currentUser.id);
+
+    if (response.statusCode == 200 && json.decode(response.body)['success']) {
+      return User.fromJson(json.decode(response.body)['data']);
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   Widget _buildBody() {
     if (_currentUser != null) {
       return Column(
@@ -72,7 +86,12 @@ class LandingPageState extends State<LandingPage> {
           RaisedButton(
             child: const Text('SIGN OUT'),
             onPressed: _handleSignOut,
-          )
+          ),
+          Expanded(
+              child: Container(
+            decoration: new BoxDecoration(),
+            child: _buildUserInfo(),
+          ))
         ],
       );
     } else {
@@ -89,6 +108,37 @@ class LandingPageState extends State<LandingPage> {
     }
   }
 
+  Widget _buildUserInfo() {
+    if (_currentUser != null) {
+      return FutureBuilder<User>(
+        future: _fetchUser(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return _buildTransactionList(snapshot.data.transactions);
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        },
+      );
+    }
+  }
+
+  Widget _buildTransactionList(transactions) {
+    print("transactions length: ${transactions.length}");
+    return ListView.builder(
+      itemCount: transactions.length,
+      itemBuilder: (context, index) {
+        final Transaction transaction = transactions[index];
+
+        return ListTile(
+          title: Text(transaction.name),
+          subtitle: Text(transaction.value.toString()),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,5 +149,61 @@ class LandingPageState extends State<LandingPage> {
           constraints: const BoxConstraints.expand(),
           child: _buildBody(),
         ));
+  }
+}
+
+class User {
+  int id;
+  String mongoId;
+  List<Transaction> transactions;
+  List<Category> categories;
+  String budget;
+
+  User.fromJson(Map<String, dynamic> json) {
+    this.id = json['userId'];
+    this.mongoId = json['_id'];
+    this.transactions = [];
+    this.categories = [];
+    this.budget = '';
+    final _transactionList = json['transactions'];
+
+    for (var i = 0; i < _transactionList.length; i++) {
+      this.transactions.add(new Transaction.fromJson(_transactionList[i]));
+    }
+  }
+}
+
+class Transaction {
+  List<String> categories;
+  String mongoId;
+  String name;
+  int value;
+  String type;
+  String date;
+  String createdAt;
+  String updatedAt;
+
+  Transaction.fromJson(Map<String, dynamic> json) {
+    this.categories = json['categories'];
+    this.mongoId = json['_id'];
+    this.name = json['name'];
+    this.value = json['value'];
+    this.type = json['type'];
+    this.date = json['date'];
+    this.createdAt = json['createdAt'];
+    this.updatedAt = json['updatedAt'];
+  }
+}
+
+class Category {
+  final String mongoId;
+  final String name;
+  final List<String> keywords;
+
+  Category({this.mongoId, this.name, this.keywords});
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+        mongoId: json['_id'], name: json['name'], keywords: json['keywords']);
   }
 }
