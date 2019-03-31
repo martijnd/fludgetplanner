@@ -32,7 +32,7 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _currentUser;
-  String _apiRoot = 'http://021d49f6.ngrok.io/api/';
+  String _apiRoot = 'http://142e6815.ngrok.io/api/';
   User user;
   List<Transaction> transactions;
   List<Category> categories;
@@ -64,7 +64,19 @@ class LandingPageState extends State<LandingPage> {
     final response = await http.get(_apiRoot + _currentUser.id);
 
     if (response.statusCode == 200 && json.decode(response.body)['success']) {
-      return User.fromJson(json.decode(response.body)['data']);
+      Map decoded = json.decode(response.body)['data'];
+      List<Transaction> transactions = new List<Transaction>();
+      List<Category> categories = new List<Category>();
+      for (var transaction in decoded['transactions']) {
+        transactions.add(Transaction.fromJson(transaction));
+      }
+
+      for (var category in decoded['categories']) {
+        categories.add(Category.fromJson(category));
+      }
+
+      return User.fromJson(
+          json.decode(response.body)['data'], transactions, categories);
     } else {
       throw Exception('Failed to load user');
     }
@@ -122,6 +134,7 @@ class LandingPageState extends State<LandingPage> {
         },
       );
     }
+    return null;
   }
 
   Widget _buildTransactionList(transactions) {
@@ -153,45 +166,67 @@ class LandingPageState extends State<LandingPage> {
 }
 
 class User {
-  int id;
-  String mongoId;
-  List<Transaction> transactions;
-  List<Category> categories;
-  String budget;
+  final int id;
+  final String mongoId;
+  final List<Transaction> transactions;
+  final List<Category> categories;
+  final String budget;
 
-  User.fromJson(Map<String, dynamic> json) {
-    this.id = json['userId'];
-    this.mongoId = json['_id'];
-    this.transactions = [];
-    this.categories = [];
-    this.budget = '';
-    final _transactionList = json['transactions'];
+  User(
+      {this.id, this.mongoId, this.transactions, this.categories, this.budget});
 
-    for (var i = 0; i < _transactionList.length; i++) {
-      this.transactions.add(new Transaction.fromJson(_transactionList[i]));
-    }
+  factory User.fromJson(Map<String, dynamic> json, transactions, categories) {
+    return User(
+        id: json['userId'],
+        mongoId: json['_id'],
+        budget: json['budget'],
+        transactions: transactions,
+        categories: categories);
   }
 }
 
 class Transaction {
-  List<String> categories;
-  String mongoId;
-  String name;
-  int value;
-  String type;
-  String date;
-  String createdAt;
-  String updatedAt;
+  final List<TransactionCategory> categories;
+  final String mongoId;
+  final String name;
+  final double value;
+  final String type;
+  final String date;
+  final String createdAt;
+  final String updatedAt;
 
-  Transaction.fromJson(Map<String, dynamic> json) {
-    this.categories = json['categories'];
-    this.mongoId = json['_id'];
-    this.name = json['name'];
-    this.value = json['value'];
-    this.type = json['type'];
-    this.date = json['date'];
-    this.createdAt = json['createdAt'];
-    this.updatedAt = json['updatedAt'];
+  Transaction(
+      {this.categories,
+      this.mongoId,
+      this.name,
+      this.value,
+      this.type,
+      this.date,
+      this.createdAt,
+      this.updatedAt});
+
+  factory Transaction.fromJson(Map<String, dynamic> jsonMap) {
+    var categories = (jsonMap['categories'] as List)
+        .map((i) => TransactionCategory.fromJson(i))
+        .toList();
+    return Transaction(
+        categories: categories,
+        mongoId: jsonMap['_id'],
+        name: jsonMap['name'],
+        value: jsonMap['value'].toDouble(),
+        type: jsonMap['type'],
+        date: jsonMap['date'],
+        createdAt: jsonMap['createdAt'],
+        updatedAt: jsonMap['updatedAt']);
+  }
+}
+
+class TransactionCategory {
+  final String name;
+  TransactionCategory({this.name});
+
+  factory TransactionCategory.fromJson(String name) {
+    return TransactionCategory(name: name);
   }
 }
 
@@ -203,7 +238,6 @@ class Category {
   Category({this.mongoId, this.name, this.keywords});
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-        mongoId: json['_id'], name: json['name'], keywords: json['keywords']);
+    return Category(mongoId: json['_id'], name: json['name']);
   }
 }
