@@ -33,7 +33,7 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _currentUser;
-  String _apiRoot = 'http://142e6815.ngrok.io/api/';
+  String _apiRoot = 'http://cd35e523.ngrok.io/api/';
   User user;
   List<Transaction> transactions;
   List<Category> categories;
@@ -46,7 +46,7 @@ class LandingPageState extends State<LandingPage> {
         _currentUser = account;
       });
     });
-    // _googleSignIn.signInSilently();
+    _googleSignIn.signInSilently();
   }
 
   Future<void> _handleSignIn() async {
@@ -132,8 +132,10 @@ class LandingPageState extends State<LandingPage> {
     return ListView.builder(
       itemCount: transactions.length,
       itemBuilder: (context, index) {
-        final Transaction transaction = transactions[index];
+        final Transaction transaction =
+            transactions[transactions.length - index - 1];
         final currencyFormat = NumberFormat("#,##0.00", 'nl_NL');
+        final dateFormat = DateFormat('dd-MM-yyyy');
         if (transaction.type != "hidden") {
           return Card(
               child: Column(
@@ -147,6 +149,8 @@ class LandingPageState extends State<LandingPage> {
                 ),
                 title: Text(transaction.name),
                 subtitle: Text("€ ${currencyFormat.format(transaction.value)}"),
+                trailing:
+                    Text(dateFormat.format(DateTime.parse(transaction.date))),
               ),
               ButtonTheme.bar(
                   child: ButtonBar(
