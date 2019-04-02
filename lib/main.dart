@@ -13,7 +13,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
     'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
   ],
 );
 
@@ -33,10 +32,12 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _currentUser;
-  String _apiRoot = 'http://cd35e523.ngrok.io/api/';
+  String _apiRoot = 'http://ff3841e4.ngrok.io/api/';
   User user;
   List<Transaction> transactions;
   List<Category> categories;
+  final currencyFormat = NumberFormat("#,##0.00", 'nl_NL');
+  final dateFormat = DateFormat('dd-MM-yyyy');
 
   @override
   void initState() {
@@ -85,16 +86,7 @@ class LandingPageState extends State<LandingPage> {
 
   Widget _buildBody() {
     if (_currentUser != null) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Expanded(
-              child: Container(
-            decoration: BoxDecoration(),
-            child: _buildUserInfo(),
-          ))
-        ],
-      );
+      return _buildLandingPage();
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -109,33 +101,47 @@ class LandingPageState extends State<LandingPage> {
     }
   }
 
-  Widget _buildUserInfo() {
-    if (_currentUser != null) {
-      return FutureBuilder<User>(
-        future: _fetchUser(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return _buildTransactionList(snapshot.data.transactions);
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return SizedBox(
-              child: CircularProgressIndicator(), height: 100.0, width: 100.0);
-        },
-      );
-    }
-    return null;
+  Widget _buildLandingPage() {
+    return FutureBuilder<User>(
+      future: _fetchUser(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              _buildBudgetDisplay(snapshot.data),
+              _buildTransactionList(snapshot.data.transactions)
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return ConstrainedBox(
+          child: CircularProgressIndicator(),
+          constraints: BoxConstraints.expand(),
+        );
+      },
+    );
+  }
+
+  Widget _buildBudgetDisplay(User user) {
+    return ListTile(
+      leading: GoogleUserCircleAvatar(
+        identity: _currentUser,
+      ),
+      title: Text(_currentUser.displayName),
+      subtitle: _calculateBudget(double.parse(user.budget), user.transactions),
+    );
   }
 
   Widget _buildTransactionList(transactions) {
-    print("transactions length: ${transactions.length}");
-    return ListView.builder(
+    return Expanded(
+        child: ListView.builder(
       itemCount: transactions.length,
       itemBuilder: (context, index) {
         final Transaction transaction =
             transactions[transactions.length - index - 1];
-        final currencyFormat = NumberFormat("#,##0.00", 'nl_NL');
-        final dateFormat = DateFormat('dd-MM-yyyy');
+
         if (transaction.type != "hidden") {
           return Card(
               child: Column(
@@ -166,7 +172,7 @@ class LandingPageState extends State<LandingPage> {
           );
         }
       },
-    );
+    ));
   }
 
   @override
@@ -195,6 +201,17 @@ class LandingPageState extends State<LandingPage> {
             child: _buildBody(),
           ),
         ));
+  }
+
+  Text _calculateBudget(double budget, List<Transaction> transactions) {
+    transactions.forEach((transaction) {
+      if (transaction.type == 'expense') {
+        return budget -= transaction.value;
+      }
+      return budget += transaction.value;
+    });
+
+    return Text("€ ${currencyFormat.format(budget)}");
   }
 }
 
