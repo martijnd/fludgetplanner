@@ -107,7 +107,6 @@ class LandingPageState extends State<LandingPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               _buildBudgetDisplay(snapshot.data),
               _buildTransactionList(snapshot.data.transactions)
@@ -125,16 +124,25 @@ class LandingPageState extends State<LandingPage> {
   }
 
   Widget _buildBudgetDisplay(User user) {
-    return ListTile(
-      leading: GoogleUserCircleAvatar(
-        identity: _currentUser,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(7.0, 10.0, 7.0, 10.0),
+      child: ListTile(
+        leading: GoogleUserCircleAvatar(
+          identity: _currentUser,
+        ),
+        title: RichText(
+            text: TextSpan(
+                text: _calculateBudget(
+                    double.parse(user.budget), user.transactions),
+                style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.green[600],
+                    fontWeight: FontWeight.bold))),
       ),
-      title: Text(_currentUser.displayName),
-      subtitle: _calculateBudget(double.parse(user.budget), user.transactions),
     );
   }
 
-  Widget _buildTransactionList(transactions) {
+  Widget _buildTransactionList(List<Transaction> transactions) {
     return Expanded(
         child: ListView.builder(
       itemCount: transactions.length,
@@ -203,15 +211,15 @@ class LandingPageState extends State<LandingPage> {
         ));
   }
 
-  Text _calculateBudget(double budget, List<Transaction> transactions) {
-    transactions.forEach((transaction) {
+  String _calculateBudget(double budget, List<Transaction> transactions) {
+    transactions.forEach((Transaction transaction) {
       if (transaction.type == 'expense') {
         return budget -= transaction.value;
       }
       return budget += transaction.value;
     });
 
-    return Text("€ ${currencyFormat.format(budget)}");
+    return "€ ${currencyFormat.format(budget)}";
   }
 }
 
