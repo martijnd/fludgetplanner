@@ -115,9 +115,8 @@ class LandingPageState extends State<LandingPage> {
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
-        return ConstrainedBox(
-          child: CircularProgressIndicator(),
-          constraints: BoxConstraints.expand(),
+        return Container(
+          child: Center(child: CircularProgressIndicator()),
         );
       },
     );
