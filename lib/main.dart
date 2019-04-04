@@ -32,7 +32,7 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _currentUser;
-  String _apiRoot = 'http://ff3841e4.ngrok.io/api/';
+  String _apiRoot = 'https://budgetplanner-backend.herokuapp.com/api/';
   User user;
   List<Transaction> transactions;
   List<Category> categories;
@@ -184,6 +184,20 @@ class LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Fludgetplanner'),
+          actions: <Widget>[_appBarActionButton()],
+        ),
+        body: ConstrainedBox(
+          constraints: const BoxConstraints.expand(),
+          child: Material(
+            child: _buildBody(),
+          ),
+        ));
+  }
+
+  Widget _appBarActionButton() {
     IconButton button;
     if (_currentUser != null) {
       button = IconButton(
@@ -197,17 +211,7 @@ class LandingPageState extends State<LandingPage> {
       );
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Fludgetplanner'),
-          actions: <Widget>[button],
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: Material(
-            child: _buildBody(),
-          ),
-        ));
+    return button;
   }
 
   String _calculateBudget(double budget, List<Transaction> transactions) {
