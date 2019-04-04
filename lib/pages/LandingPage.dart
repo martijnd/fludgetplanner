@@ -64,13 +64,15 @@ class LandingPageState extends State<LandingPage> {
           identity: widget.currentUser,
         ),
         title: RichText(
-            text: TextSpan(
-                text: data.calculateBudget(
-                    double.parse(user.budget), user.transactions),
-                style: TextStyle(
-                    fontSize: 40,
-                    color: Colors.green[600],
-                    fontWeight: FontWeight.bold))),
+          text: TextSpan(
+            text: data.calculateBudget(
+                double.parse(user.budget), user.transactions),
+            style: TextStyle(
+                fontSize: 40,
+                color: Colors.green[600],
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }
@@ -85,30 +87,34 @@ class LandingPageState extends State<LandingPage> {
 
         if (transaction.type != "hidden") {
           return Card(
-              child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: CircleAvatar(
-                  child: Text(transaction.name[0].toUpperCase()),
-                  backgroundColor:
-                      transaction.type == 'expense' ? Colors.red : Colors.green,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: CircleAvatar(
+                    child: Text(transaction.name[0].toUpperCase()),
+                    backgroundColor: transaction.type == 'expense'
+                        ? Colors.red
+                        : Colors.green,
+                  ),
+                  title: Text(transaction.name),
+                  subtitle:
+                      Text("€ ${currencyFormat.format(transaction.value)}"),
+                  trailing: Text(
+                    "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
-                title: Text(transaction.name),
-                subtitle: Text("€ ${currencyFormat.format(transaction.value)}"),
-                trailing: Text(
-                  "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-              ButtonTheme.bar(
+                ButtonTheme.bar(
                   child: ButtonBar(
-                children: <Widget>[
-                  FlatButton(child: Text('DELETE'), onPressed: () {})
-                ],
-              ))
-            ],
-          ));
+                    children: <Widget>[
+                      FlatButton(child: Text('DELETE'), onPressed: () {})
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
         } else {
           return SizedBox(
             child: null,
@@ -121,15 +127,16 @@ class LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Fludgetplanner'),
-          actions: <Widget>[LogoutButton()],
+      appBar: AppBar(
+        title: const Text('Fludgetplanner'),
+        actions: <Widget>[LogoutButton()],
+      ),
+      body: ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: Material(
+          child: _buildLandingPage(),
         ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: Material(
-            child: _buildLandingPage(),
-          ),
-        ));
+      ),
+    );
   }
 }
