@@ -10,8 +10,8 @@ class LogoutButton extends StatelessWidget {
         if (snapshot.hasData) {
         } else {
           return IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: authService.signIn,
+            icon: Icon(Icons.person),
+            onPressed: authService.signOut,
           );
         }
       },

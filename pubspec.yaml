@@ -27,3 +27,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: "Grand Hotel"
+      fonts:
+        - asset: fonts/GrandHotel-Regular.ttf
+    - family: Pacifico
+      fonts:
+        - asset: fonts/Pacifico-Regular.ttf

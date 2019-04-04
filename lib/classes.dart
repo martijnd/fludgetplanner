@@ -25,6 +25,7 @@ class Transaction {
   final double value;
   final String type;
   final String date;
+  final String repeat;
   final String createdAt;
   final String updatedAt;
 
@@ -35,6 +36,7 @@ class Transaction {
       this.value,
       this.type,
       this.date,
+      this.repeat,
       this.createdAt,
       this.updatedAt});
 
@@ -49,6 +51,7 @@ class Transaction {
         value: jsonMap['value'].toDouble(),
         type: jsonMap['type'],
         date: jsonMap['date'],
+        repeat: jsonMap['repeat'],
         createdAt: jsonMap['createdAt'],
         updatedAt: jsonMap['updatedAt']);
   }

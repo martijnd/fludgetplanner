@@ -1,12 +1,11 @@
-import 'dart:convert' as json;
-
 import 'package:fludgetplanner/classes.dart';
 import 'package:fludgetplanner/components/LogoutButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'package:fludgetplanner/data.dart';
 import 'package:intl/intl.dart';
-import "package:http/http.dart" as http;
 
 class LandingPage extends StatefulWidget {
   final GoogleSignInAccount currentUser;
@@ -18,44 +17,27 @@ class LandingPage extends StatefulWidget {
 }
 
 class LandingPageState extends State<LandingPage> {
-  String _apiRoot = 'https://budgetplanner-backend.herokuapp.com/api/';
   User user;
   List<Transaction> transactions;
   List<Category> categories;
   final currencyFormat = NumberFormat("#,##0.00", 'nl_NL');
   final dateFormat = DateFormat('dd-MM-yyyy');
+  final repeatTranslations = {
+    'once': 'Eenmalig',
+    'daily': 'Dagelijks',
+    'weekly': 'Wekelijks',
+    'monthly': 'Maandelijks',
+    'yearly': 'Jaarlijks'
+  };
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<User> _fetchUser() async {
-    final response = await http.get(_apiRoot + widget.currentUser.id);
-
-    if (response.statusCode == 200 &&
-        json.jsonDecode(response.body)['success']) {
-      Map decoded = json.jsonDecode(response.body)['data'];
-      List<Transaction> transactions = new List<Transaction>();
-      List<Category> categories = new List<Category>();
-      for (var transaction in decoded['transactions']) {
-        transactions.add(Transaction.fromJson(transaction));
-      }
-
-      for (var category in decoded['categories']) {
-        categories.add(Category.fromJson(category));
-      }
-
-      return User.fromJson(
-          json.jsonDecode(response.body)['data'], transactions, categories);
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
   Widget _buildLandingPage() {
     return FutureBuilder<User>(
-      future: _fetchUser(),
+      future: data.fetchUser(widget.currentUser.id),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
@@ -83,7 +65,7 @@ class LandingPageState extends State<LandingPage> {
         ),
         title: RichText(
             text: TextSpan(
-                text: _calculateBudget(
+                text: data.calculateBudget(
                     double.parse(user.budget), user.transactions),
                 style: TextStyle(
                     fontSize: 40,
@@ -114,8 +96,10 @@ class LandingPageState extends State<LandingPage> {
                 ),
                 title: Text(transaction.name),
                 subtitle: Text("€ ${currencyFormat.format(transaction.value)}"),
-                trailing:
-                    Text(dateFormat.format(DateTime.parse(transaction.date))),
+                trailing: Text(
+                  "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
               ButtonTheme.bar(
                   child: ButtonBar(
@@ -147,16 +131,5 @@ class LandingPageState extends State<LandingPage> {
             child: _buildLandingPage(),
           ),
         ));
-  }
-
-  String _calculateBudget(double budget, List<Transaction> transactions) {
-    transactions.forEach((Transaction transaction) {
-      if (transaction.type == 'expense') {
-        return budget -= transaction.value;
-      }
-      return budget += transaction.value;
-    });
-
-    return "€ ${currencyFormat.format(budget)}";
   }
 }
