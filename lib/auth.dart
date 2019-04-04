@@ -30,6 +30,10 @@ class AuthService {
   void disconnect() {
     _googleSignIn.disconnect();
   }
+
+  void silentSignIn() {
+    _googleSignIn.signInSilently();
+  }
 }
 
 final AuthService authService = AuthService();

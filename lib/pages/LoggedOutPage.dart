@@ -4,6 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class LoggedOutPage extends StatelessWidget {
+  List<Color> _getGradient(bool reverse) {
+    Color color1 = Colors.blue;
+    Color color2 = Colors.blue[200];
+    if (!reverse)
+      return [color1, color2];
+    else
+      return [color2, color1];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,8 +21,7 @@ class LoggedOutPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Color(0xFFC0392B), Color(0xFF8E44AD)],
-                begin: Alignment.topLeft)),
+                colors: _getGradient(false), begin: Alignment.topLeft)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
@@ -26,7 +34,7 @@ class LoggedOutPage extends StatelessWidget {
               width: 200.0,
               height: 100.0,
               gradient: LinearGradient(
-                  colors: [Color(0xFF8E44AD), Color(0xFFC0392B)],
+                  colors: [Colors.blue[400], Colors.blue[400]],
                   begin: Alignment.topLeft),
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               child: Text(

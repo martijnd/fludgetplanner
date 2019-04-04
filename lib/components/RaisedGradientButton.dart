@@ -36,8 +36,8 @@ class RaisedGradientButton extends StatelessWidget {
                 borderRadius: borderRadius,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
-                    offset: Offset(0.0, 1.5),
+                    color: Colors.black.withOpacity(0.2),
+                    offset: Offset(0.0, 2.5),
                     blurRadius: 1.5,
                   )
                 ],
