@@ -1,4 +1,5 @@
 import 'package:fludgetplanner/classes.dart';
+import 'package:fludgetplanner/components/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -50,7 +51,7 @@ class LandingPageState extends State<LandingPage> {
           return Text("${snapshot.error}");
         }
         return Container(
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(child: loadingAnimation()),
         );
       },
     );

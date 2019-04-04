@@ -1,8 +1,8 @@
 import 'package:fludgetplanner/auth.dart';
 import 'package:fludgetplanner/components/RaisedGradientButton.dart';
+import 'package:fludgetplanner/components/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flare_flutter/flare_actor.dart';
 
 class LoggedOutPage extends StatelessWidget {
   List<Color> _getGradient(bool reverse) {
@@ -31,7 +31,7 @@ class LoggedOutPage extends StatelessWidget {
                 style: TextStyle(
                     fontFamily: 'Pacifico', color: Colors.white, fontSize: 40),
               ),
-              _buildLoadingAnimation(),
+              loadingAnimation(),
               RaisedGradientButton(
                 width: 200.0,
                 height: 100.0,
@@ -48,19 +48,6 @@ class LoggedOutPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingAnimation() {
-    return SizedBox(
-      height: 300.0,
-      width: 400.0,
-      child: FlareActor(
-        "assets/loading.flr",
-        alignment: Alignment.center,
-        animation: "Animation",
-        fit: BoxFit.contain,
       ),
     );
   }
