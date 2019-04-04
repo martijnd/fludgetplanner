@@ -65,8 +65,8 @@ class LandingPageState extends State<LandingPage> {
         ),
         title: RichText(
           text: TextSpan(
-            text: data.calculateBudget(
-                double.parse(user.budget), user.transactions),
+            text: "€ ${currencyFormat.format(double.parse(user.budget))}"
+                .replaceAll(',00', ',-'),
             style: TextStyle(
                 fontSize: 40,
                 color: Colors.green[600],
@@ -98,8 +98,8 @@ class LandingPageState extends State<LandingPage> {
                         : Colors.green,
                   ),
                   title: Text(transaction.name),
-                  subtitle:
-                      Text("€ ${currencyFormat.format(transaction.value)}"),
+                  subtitle: Text("€ ${currencyFormat.format(transaction.value)}"
+                      .replaceAll(',00', ',-')),
                   trailing: Text(
                     "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
                     style: TextStyle(color: Colors.grey),
