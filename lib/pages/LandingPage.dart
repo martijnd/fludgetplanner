@@ -80,49 +80,51 @@ class LandingPageState extends State<LandingPage> {
 
   Widget _buildTransactionList(List<Transaction> transactions) {
     return Expanded(
-        child: ListView.builder(
-      itemCount: transactions.length,
-      itemBuilder: (context, index) {
-        final Transaction transaction =
-            transactions[transactions.length - index - 1];
+      child: ListView.builder(
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          final Transaction transaction =
+              transactions[transactions.length - index - 1];
 
-        if (transaction.type != "hidden") {
-          return Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: CircleAvatar(
-                    child: Text(transaction.name[0].toUpperCase()),
-                    backgroundColor: transaction.type == 'expense'
-                        ? Colors.red
-                        : Colors.green,
+          if (transaction.type != "hidden") {
+            return Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: CircleAvatar(
+                      child: Text(transaction.name[0].toUpperCase()),
+                      backgroundColor: transaction.type == 'expense'
+                          ? Colors.red
+                          : Colors.green,
+                    ),
+                    title: Text(transaction.name),
+                    subtitle: Text(
+                        "€ ${currencyFormat.format(transaction.value)}"
+                            .replaceAll(',00', ',-')),
+                    trailing: Text(
+                      "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
-                  title: Text(transaction.name),
-                  subtitle: Text("€ ${currencyFormat.format(transaction.value)}"
-                      .replaceAll(',00', ',-')),
-                  trailing: Text(
-                    "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-                ButtonTheme.bar(
-                  child: ButtonBar(
-                    children: <Widget>[
-                      FlatButton(child: Text('DELETE'), onPressed: () {})
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        } else {
-          return SizedBox(
-            child: null,
-          );
-        }
-      },
-    ));
+                  ButtonTheme.bar(
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(child: Text('DELETE'), onPressed: () {})
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return SizedBox(
+              child: null,
+            );
+          }
+        },
+      ),
+    );
   }
 
   @override
