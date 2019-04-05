@@ -8,10 +8,7 @@ class LoggedOutPage extends StatelessWidget {
   List<Color> _getGradient(bool reverse) {
     Color color1 = Colors.blue;
     Color color2 = Colors.blue[200];
-    if (!reverse)
-      return [color1, color2];
-    else
-      return [color2, color1];
+    return reverse ? [color2, color1] : [color1, color2];
   }
 
   @override
@@ -21,8 +18,9 @@ class LoggedOutPage extends StatelessWidget {
         constraints: const BoxConstraints.expand(),
         child: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: _getGradient(false), begin: Alignment.topLeft)),
+            gradient: LinearGradient(
+                colors: _getGradient(false), begin: Alignment.topLeft),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
