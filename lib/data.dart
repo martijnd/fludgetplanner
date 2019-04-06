@@ -13,7 +13,7 @@ class Data {
   Data({this.budget});
 
   Future<User> fetchUser(String userId) async {
-    final response = await http.get(_apiRoot + userId);
+    final response = await http.get("$_apiRoot/user/$userId");
 
     if (response.statusCode == 200 &&
         json.jsonDecode(response.body)['success']) {
