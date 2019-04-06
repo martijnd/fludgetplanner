@@ -89,8 +89,7 @@ class LandingPageState extends State<LandingPage> {
         if (transactions.length == transactions.length - index)
           return _buildBudgetDisplay(user);
 
-        final Transaction transaction =
-            transactions[transactions.length - index];
+        final Transaction transaction = transactions[index - 1];
 
         if (transaction.type != "hidden") {
           return Card(
