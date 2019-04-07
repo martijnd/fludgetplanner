@@ -8,7 +8,7 @@ class LoggedOutPage extends StatelessWidget {
   List<Color> _getGradient(bool reverse) {
     Color color1 = Colors.blue;
     Color color2 = Colors.blue[200];
-    !reverse ? [color1, color2] : [color2, color1];
+    return reverse ? [color2, color1] : [color1, color2];
   }
 
   @override

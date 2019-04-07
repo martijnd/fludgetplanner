@@ -42,10 +42,7 @@ class LandingPageState extends State<LandingPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
-            children: <Widget>[
-              _buildBudgetDisplay(snapshot.data),
-              _buildTransactionList(snapshot.data.transactions)
-            ],
+            children: <Widget>[_buildTransactionList(snapshot.data)],
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -59,72 +56,77 @@ class LandingPageState extends State<LandingPage> {
 
   Widget _buildBudgetDisplay(User user) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(7.0, 10.0, 7.0, 10.0),
+      padding: const EdgeInsets.fromLTRB(7.0, 20.0, 7.0, 20.0),
       child: ListTile(
-        leading: GoogleUserCircleAvatar(
-          identity: widget.currentUser,
-        ),
-        title: RichText(
-          text: TextSpan(
-            text: "€ ${currencyFormat.format(double.parse(user.budget))}"
-                .replaceAll(',00', ',-'),
-            style: TextStyle(
-                fontSize: 40,
-                color: Colors.green[600],
-                fontWeight: FontWeight.bold),
+        // leading: GoogleUserCircleAvatar(
+        //   identity: widget.currentUser,
+        // ),
+        title: Center(
+          child: RichText(
+            text: TextSpan(
+              text: _toMoney(double.parse(user.budget)),
+              style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.green[600],
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTransactionList(List<Transaction> transactions) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: transactions.length,
-        itemBuilder: (context, index) {
-          final Transaction transaction =
-              transactions[transactions.length - index - 1];
+  String _toMoney(double budget) {
+    return "€ ${currencyFormat.format(budget)}".replaceAll(',00', ',-');
+  }
 
-          if (transaction.type != "hidden") {
-            return Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    leading: CircleAvatar(
-                      child: Text(transaction.name[0].toUpperCase()),
-                      backgroundColor: transaction.type == 'expense'
-                          ? Colors.red
-                          : Colors.green,
-                    ),
-                    title: Text(transaction.name),
-                    subtitle: Text(
-                        "€ ${currencyFormat.format(transaction.value)}"
-                            .replaceAll(',00', ',-')),
-                    trailing: Text(
-                      "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
-                      style: TextStyle(color: Colors.grey),
-                    ),
+  Widget _buildTransactionList(User user) {
+    List<Transaction> transactions = user.transactions;
+    return Expanded(
+        child: ListView.builder(
+      itemCount: transactions.length + 1,
+      itemBuilder: (context, index) {
+        if (transactions.length == transactions.length - index)
+          return _buildBudgetDisplay(user);
+
+        final Transaction transaction = transactions[index - 1];
+
+        if (transaction.type != "hidden") {
+          return Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: CircleAvatar(
+                    child: Text(transaction.name[0].toUpperCase()),
+                    backgroundColor: transaction.type == 'expense'
+                        ? Colors.red
+                        : Colors.green,
                   ),
-                  ButtonTheme.bar(
-                    child: ButtonBar(
-                      children: <Widget>[
-                        FlatButton(child: Text('DELETE'), onPressed: () {})
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            );
-          } else {
-            return SizedBox(
-              child: null,
-            );
-          }
-        },
-      ),
-    );
+                  title: Text(transaction.name),
+                  subtitle: Text(_toMoney(transaction.value)),
+                  trailing: Text(
+                    "${repeatTranslations[transaction.repeat] ?? 'Eenmalig'} - ${dateFormat.format(DateTime.parse(transaction.date))}",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+                ButtonTheme.bar(
+                  child: ButtonBar(
+                    children: <Widget>[
+                      FlatButton(child: Text('DELETE'), onPressed: () {})
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        } else {
+          return SizedBox(
+            child: null,
+          );
+        }
+      },
+    ));
   }
 
   @override

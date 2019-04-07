@@ -23,8 +23,12 @@
           }
         },
         {
-          "client_id": "1053409432630-1g6snn8qvb9ilpblo9o2niidoul7gjv9.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "1053409432630-cmcckj7eo5dr1usuubq1k6dcqopafv6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fludgetplanner",
+            "certificate_hash": "72cfc1f6f4b8bb2820f1d1efe611f9ba25f2cbb7"
+          }
         }
       ],
       "api_key": [
@@ -33,20 +37,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "1053409432630-1g6snn8qvb9ilpblo9o2niidoul7gjv9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
